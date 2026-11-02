@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import anime from "animejs";
+import { animate, stagger } from "animejs";
 import { ArrowRight, Check, Copy } from "lucide-react";
 import { LinkButton } from "./button";
 import CopyEmail from "./copyemail";
@@ -10,11 +10,10 @@ export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    anime({
-      targets: heroRef.current?.children || [],
+    animate(heroRef.current?.children || [], {
       opacity: [0, 1],
       translateY: [20, 0],
-      delay: anime.stagger(150),
+      delay: stagger(150),
       duration: 800,
       easing: "easeOutExpo",
     });
