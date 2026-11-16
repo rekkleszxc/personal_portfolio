@@ -3,7 +3,9 @@ export const profile = {
   role: "Student / Vibe Coder",
   email: "alcantara.georgeharold.ayson@gmail.com",
   github: "https://github.com/rekkleszxc",
-  linkedin: "https://www.linkedin.com/in/alexmorgan",
+  linkedin: "https://www.linkedin.com/in/alcantara-george-harold-a03977448/",
+  facebook: "https://www.facebook.com/rekkles1",
+  instagram: "https://www.instagram.com/ykgxrge/",
   status: "Online!",
   headline: "I turn product ideas into fast, reliable web apps.",
   tagline:
@@ -18,7 +20,37 @@ export const navLinks = [
   { label: "About", href: "#about" },
   { label: "Projects", href: "#projects" },
   { label: "Experience", href: "#experience" },
+  { label: "Certificates", href: "#certificates" },
   { label: "Contact", href: "#contact" },
+];
+
+export type Certificate = {
+  title: string;
+  issuer: string;
+  date: string;
+  image: string;
+  credentialUrl?: string;
+};
+
+export const certificates: Certificate[] = [
+  {
+    title: "National Certificate II in Computer Systems Servicing",
+    issuer: "TESDA",
+    date: "December 2024",
+    image: "/certificates/cert-1.png",
+  },
+  {
+    title: "Apollo 2026: Blueprint Insights, IT Let's Launch!",
+    issuer: "Quezon City University",
+    date: "February 2026",
+    image: "/certificates/cert-2.png",
+  },
+  {
+    title: "AppBuildersPH Hackathon 2026",
+    issuer: "AppBuildersPH",
+    date: "October 2026",
+    image: "/certificates/cert-3.png",
+  },
 ];
 
 export const categories = ["All", "Full-Stack", "AI & ML", "Frontend"] as const;

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { motion, type HTMLMotionProps } from "framer-motion";
 import { spring } from "../../lib/motion";
 
@@ -38,8 +37,8 @@ export function LinkButton({
   return (
     <motion.a
       href={href}
-      whileHover={{ scale: 1.04 }}
-      whileTap={{ scale: 0.97 }}
+      whileHover={tactile.whileHover}
+      whileTap={tactile.whileTap}
       className={`inline-flex items-center justify-center gap-2 ${className || ""}`}
       {...props}
     >

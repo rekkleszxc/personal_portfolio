@@ -1,14 +1,14 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { animate, stagger } from "animejs";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Github } from "lucide-react";
 import { categories, projects, type Project } from "../../lib/data";
-import { rise, spring, viewport } from "../../lib/motion";
+import { spring, viewport } from "../../lib/motion";
 
 type Filter = (typeof categories)[number];
 
-/* Outer card radius 24px with 12px inset gives the preview a 12px radius, so the corners stay concentric. */
 function Preview({ p }: { p: Project }) {
   return (
     <div
@@ -60,19 +60,25 @@ function Preview({ p }: { p: Project }) {
 
 export default function Projects() {
   const [filter, setFilter] = useState<Filter>("All");
+  const projectsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    animate(projectsRef.current?.children || [], {
+      opacity: [0, 1],
+      translateY: [30, 0],
+      delay: stagger(150),
+      duration: 800,
+      easing: "easeOutExpo",
+    });
+  }, []);
+
   const list =
     filter === "All" ? projects : projects.filter((p) => p.category === filter);
 
   return (
     <section id="projects" className="border-t border-white/10 py-24">
-      <div className="mx-auto max-w-6xl px-6">
-        <motion.div
-          variants={rise}
-          initial="hidden"
-          whileInView="show"
-          viewport={viewport}
-          className="flex flex-wrap items-end justify-between gap-6"
-        >
+      <div ref={projectsRef} className="mx-auto max-w-6xl px-6">
+        <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
               Selected projects
@@ -105,7 +111,7 @@ export default function Projects() {
               </button>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         <motion.ul
           layout

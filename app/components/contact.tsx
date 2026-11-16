@@ -1,12 +1,15 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { animate, stagger } from "animejs";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertCircle,
   Check,
   CheckCircle2,
   Copy,
+  Facebook,
   Github,
+  Instagram,
   Linkedin,
   Loader2,
   Mail,
@@ -14,7 +17,8 @@ import {
 import { Button } from "./button";
 import CopyEmail from "./copyemail";
 import { profile } from "../../lib/data";
-import { rise, spring, stagger, viewport } from "../../lib/motion";
+import { spring } from "../../lib/motion";
+import { readAttribution } from "../../lib/attribution";
 
 type Field = "name" | "email" | "message";
 type Values = Record<Field, string>;
@@ -49,7 +53,19 @@ export default function Contact() {
   const [attempted, setAttempted] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState("");
+  const [company, setCompany] = useState("");
   const form = useRef<HTMLFormElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    animate(contactRef.current?.children || [], {
+      opacity: [0, 1],
+      translateY: [30, 0],
+      delay: stagger(150),
+      duration: 800,
+      easing: "easeOutExpo",
+    });
+  }, []);
 
   const errors = validate(values);
   const show = (f: Field) => (touched[f] || attempted ? errors[f] : undefined);
@@ -70,7 +86,11 @@ export default function Contact() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          ...values,
+          ...readAttribution(),
+          company,
+        }),
       });
       if (!res.ok)
         throw new Error(
@@ -106,6 +126,7 @@ export default function Contact() {
       {control}
     </div>
   );
+
   const props = (f: Field) => ({
     id: f,
     name: f,
@@ -123,14 +144,11 @@ export default function Contact() {
 
   return (
     <section id="contact" className="border-t border-white/10 py-24">
-      <motion.div
-        variants={stagger(0.1)}
-        initial="hidden"
-        whileInView="show"
-        viewport={viewport}
+      <div
+        ref={contactRef}
         className="mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-[1fr_1.2fr]"
       >
-        <motion.div variants={rise}>
+        <div>
           <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
             Let's talk about your project
           </h2>
@@ -164,6 +182,8 @@ export default function Contact() {
             {[
               { label: "LinkedIn", href: profile.linkedin, Icon: Linkedin },
               { label: "GitHub", href: profile.github, Icon: Github },
+              { label: "Facebook", href: profile.facebook, Icon: Facebook },
+              { label: "Instagram", href: profile.instagram, Icon: Instagram },
             ].map(({ label, href, Icon }) => (
               <motion.a
                 key={label}
@@ -182,14 +202,13 @@ export default function Contact() {
               </motion.a>
             ))}
           </div>
-        </motion.div>
+        </div>
 
-        <motion.form
-          variants={rise}
+        <form
           ref={form}
           onSubmit={submit}
           noValidate
-          className="rounded-[24px] border border-white/10 bg-surface p-6 md:p-8"
+          className="relative rounded-[24px] border border-white/10 bg-surface p-6 md:p-8"
         >
           <div className="space-y-8">
             {row(
@@ -221,6 +240,19 @@ export default function Contact() {
                 className={`${field(!!show("message"))} resize-y`}
               />,
             )}
+          </div>
+
+          <div className="absolute left-[-9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
+            <label htmlFor="company">Company</label>
+            <input
+              id="company"
+              name="company"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+            />
           </div>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -261,8 +293,8 @@ export default function Contact() {
               )}
             </AnimatePresence>
           </div>
-        </motion.form>
-      </motion.div>
+        </form>
+      </div>
     </section>
   );
 }

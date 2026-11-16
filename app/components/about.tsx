@@ -1,8 +1,7 @@
 "use client";
-
-import { motion } from "framer-motion";
-import { rise, stagger, spring, viewport } from "../../lib/motion";
-import { profile, skills, type Level } from "../../lib/data";;
+import { useEffect, useRef } from "react";
+import { animate, stagger } from "animejs";
+import { profile, skills, type Level } from "../../lib/data";
 
 const labels: Record<Level, string> = {
   1: "Familiar",
@@ -24,16 +23,25 @@ function Dots({ level }: { level: Level }) {
 }
 
 export default function About() {
+  const aboutRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    animate(aboutRef.current?.children || [], {
+      opacity: [0, 1],
+      translateY: [30, 0],
+      delay: stagger(200),
+      duration: 800,
+      easing: "easeOutExpo",
+    });
+  }, []);
+
   return (
     <section id="about" className="border-t border-white/10 py-24">
-      <motion.div
-        variants={stagger()}
-        initial="hidden"
-        whileInView="show"
-        viewport={viewport}
+      <div
+        ref={aboutRef}
         className="mx-auto grid max-w-6xl gap-14 px-6 lg:grid-cols-[1fr_1.2fr]"
       >
-        <motion.div variants={rise}>
+        <div>
           <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
             About me
           </h2>
@@ -42,19 +50,13 @@ export default function About() {
               <p key={p}>{p}</p>
             ))}
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          variants={stagger(0.08)}
-          className="grid gap-4 sm:grid-cols-2"
-        >
+        <div className="grid gap-4 sm:grid-cols-2">
           {skills.map((group) => (
-            <motion.div
+            <div
               key={group.domain}
-              variants={rise}
-              whileHover={{ y: -4 }}
-              transition={spring}
-              className="rounded-2xl border border-white/10 bg-surface p-5 hover:border-accent/40"
+              className="rounded-2xl border border-white/10 bg-surface p-5 hover:border-accent/40 transition-colors"
             >
               <h3 className="font-display text-lg font-semibold">
                 {group.domain}
@@ -70,10 +72,10 @@ export default function About() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   );
 }
